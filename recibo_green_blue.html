@@ -1,0 +1,881 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Recibo – GREEN & BLUE aquamarine</title>
+  <link href="https://fonts.googleapis.com/css2?family=Permanent+Marker&family=Orbitron:wght@700&family=Source+Sans+3:ital,wght@0,300;0,400;0,600;0,700;1,400&display=swap" rel="stylesheet"/>
+  <style>
+    /* ─── Reset & Base ─────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --green:      #1a8c2a;
+      --green-dark: #146320;
+      --green-light:#2db840;
+      --blue:       #1565c0;
+      --blue-mid:   #1976d2;
+      --blue-light: #42a5f5;
+      --blue-pale:  #ddeeff;
+      --red-stamp:  #c62828;
+      --border:     #1976d2;
+      --bg-receipt: #eef7ff;
+      --text-dark:  #0d2a4a;
+      --line-color: #1976d2;
+    }
+
+    body {
+      background: linear-gradient(135deg, #c8e6c9 0%, #bbdefb 50%, #c8e6c9 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 30px 16px;
+      font-family: 'Source Sans 3', sans-serif;
+    }
+
+    /* ─── Receipt Wrapper ──────────────────────────── */
+    .receipt {
+      background: var(--bg-receipt);
+      width: 100%;
+      max-width: 820px;
+      border: 2px solid var(--border);
+      border-radius: 4px;
+      box-shadow: 0 8px 32px rgba(21,101,192,.25), 0 2px 8px rgba(26,140,42,.15);
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* subtle paper texture */
+    .receipt::before {
+      content:'';
+      position:absolute; inset:0;
+      background: repeating-linear-gradient(
+        0deg, transparent, transparent 28px,
+        rgba(25,118,210,.04) 28px, rgba(25,118,210,.04) 29px
+      );
+      pointer-events: none;
+      z-index:0;
+    }
+
+    .receipt > * { position: relative; z-index: 1; }
+
+    /* ─── HEADER ───────────────────────────────────── */
+    header {
+      border-bottom: 2px solid var(--border);
+      padding: 12px 16px 10px;
+    }
+
+    .header-top {
+      display: grid;
+      grid-template-columns: 210px 1fr auto;
+      gap: 10px;
+      align-items: start;
+    }
+
+    /* Logo block */
+    .logo-block { display: flex; flex-direction: column; gap: 2px; }
+
+    .logo-title {
+      font-family: 'Permanent Marker', cursive;
+      font-size: 2rem;
+      line-height: 1;
+      display: flex;
+      align-items: center;
+      gap: 0;
+    }
+    .logo-green { color: var(--green); }
+    .logo-amp   { color: var(--green); font-size: 1.6rem; margin: 0 2px; }
+    .logo-blue  { color: var(--blue); }
+
+    .logo-sub {
+      font-family: 'Permanent Marker', cursive;
+      font-size: .95rem;
+      letter-spacing: 3px;
+      color: var(--green-dark);
+      padding-left: 2px;
+    }
+    .logo-tagline {
+      font-size: .7rem;
+      color: var(--blue-mid);
+      font-style: italic;
+      font-weight: 400;
+      margin-top: 3px;
+      letter-spacing: .3px;
+    }
+
+    /* Categories + phone */
+    .categories-block {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .categories {
+      display: flex;
+      gap: 18px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .category-item {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-weight: 700;
+      font-size: .72rem;
+      color: var(--green-dark);
+      letter-spacing: .5px;
+      white-space: nowrap;
+    }
+
+    .category-item input[type="checkbox"] {
+      width: 13px; height: 13px;
+      accent-color: var(--green);
+      cursor: pointer;
+      border: 1.5px solid var(--blue);
+    }
+
+    .phone-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: .8rem;
+      font-weight: 700;
+      color: var(--blue);
+    }
+    .phone-icon { font-size: .95rem; }
+
+    /* Receipt number */
+    .receipt-num-block {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .receipt-label {
+      font-size: .65rem;
+      font-weight: 700;
+      color: var(--green-dark);
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+
+    .receipt-badge {
+      border: 2px solid var(--blue-mid);
+      border-radius: 6px;
+      padding: 5px 14px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .receipt-no-label {
+      font-size: .75rem;
+      font-weight: 700;
+      color: var(--blue);
+    }
+
+    .receipt-no-value {
+      font-family: 'Orbitron', monospace;
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: var(--red-stamp);
+      letter-spacing: 2px;
+    }
+
+    /* ─── DATES ROW ────────────────────────────────── */
+    .dates-row {
+      display: flex;
+      gap: 24px;
+      margin-top: 10px;
+      flex-wrap: wrap;
+    }
+
+    .date-group {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: .72rem;
+      font-weight: 600;
+      color: var(--text-dark);
+    }
+
+    .date-boxes {
+      display: flex;
+      gap: 3px;
+    }
+
+    .date-box {
+      width: 30px; height: 22px;
+      border: 1.5px solid var(--border);
+      border-radius: 2px;
+      background: white;
+      text-align: center;
+      font-size: .72rem;
+      color: var(--text-dark);
+      outline: none;
+      font-family: 'Source Sans 3', sans-serif;
+    }
+    .date-box:focus { border-color: var(--green); box-shadow: 0 0 0 2px rgba(26,140,42,.15); }
+
+    /* ─── BODY SECTION ─────────────────────────────── */
+    .receipt-body { padding: 0 14px 14px; }
+
+    /* ─── Client Fields ────────────────────────────── */
+    .client-section { padding: 10px 0 6px; }
+
+    .field-row {
+      display: flex;
+      align-items: flex-end;
+      gap: 8px;
+      margin-bottom: 8px;
+      flex-wrap: wrap;
+    }
+
+    .field-group {
+      display: flex;
+      align-items: flex-end;
+      gap: 4px;
+      flex: 1;
+      min-width: 0;
+    }
+
+    .field-label {
+      font-size: .72rem;
+      font-weight: 700;
+      color: var(--text-dark);
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .field-line {
+      flex: 1;
+      min-width: 40px;
+      height: 20px;
+      border: none;
+      border-bottom: 1.5px solid var(--line-color);
+      background: transparent;
+      outline: none;
+      font-size: .78rem;
+      color: var(--text-dark);
+      font-family: 'Source Sans 3', sans-serif;
+      padding: 0 2px;
+    }
+    .field-line:focus { border-bottom-color: var(--green); background: rgba(26,140,42,.04); }
+    .field-line::placeholder { color: #aac4e0; font-style: italic; font-size: .68rem; }
+
+    .field-line.short  { max-width: 70px; }
+    .field-line.xshort { max-width: 48px; }
+
+    /* ─── Service Table ─────────────────────────────── */
+    .service-section { margin-top: 4px; }
+
+    .service-table {
+      width: 100%;
+      border-collapse: collapse;
+      border: 1.5px solid var(--border);
+    }
+
+    .service-table th {
+      background: white;
+      border: 1.5px solid var(--border);
+      padding: 6px 10px;
+      font-size: .78rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .5px;
+    }
+
+    .th-desc { color: var(--green-dark); text-align: center; }
+    .th-total{ color: var(--blue);       text-align: center; width: 110px; }
+
+    .service-table td {
+      border: 1.5px solid var(--border);
+      vertical-align: top;
+      padding: 0;
+    }
+
+    .service-table .desc-cell  { }
+    .service-table .total-cell { width: 110px; }
+
+    /* editable rows */
+    .service-rows { min-height: 140px; }
+
+    .service-row {
+      display: flex;
+      border-bottom: 1px solid rgba(25,118,210,.2);
+    }
+    .service-row:last-child { border-bottom: none; }
+
+    .sr-desc, .sr-total {
+      padding: 4px 8px;
+      min-height: 28px;
+      outline: none;
+      font-size: .78rem;
+      color: var(--text-dark);
+      font-family: 'Source Sans 3', sans-serif;
+    }
+
+    .sr-desc  { flex: 1; }
+    .sr-total {
+      width: 110px;
+      min-width: 110px;
+      border-left: 1.5px solid var(--border);
+      text-align: right;
+    }
+
+    [contenteditable]:focus {
+      background: rgba(26,140,42,.04);
+      outline: 1px solid rgba(26,140,42,.3);
+    }
+    [contenteditable]:empty::before {
+      content: attr(data-placeholder);
+      color: #aac4e0;
+      font-style: italic;
+      font-size: .68rem;
+    }
+
+    .add-row-btn {
+      display: block;
+      width: 100%;
+      padding: 5px;
+      background: rgba(25,118,210,.06);
+      border: none;
+      border-top: 1px dashed var(--blue-light);
+      font-size: .68rem;
+      color: var(--blue-mid);
+      cursor: pointer;
+      font-family: 'Source Sans 3', sans-serif;
+      letter-spacing: .5px;
+    }
+    .add-row-btn:hover { background: rgba(25,118,210,.12); }
+
+    /* ─── Observations + Total ─────────────────────── */
+    .obs-total-row {
+      display: grid;
+      grid-template-columns: 1fr 110px;
+      border: 1.5px solid var(--border);
+      border-top: none;
+    }
+
+    .obs-cell {
+      border-right: 1.5px solid var(--border);
+      padding: 6px 10px;
+    }
+
+    .obs-label {
+      font-size: .72rem;
+      font-weight: 700;
+      color: var(--green-dark);
+      text-transform: uppercase;
+      letter-spacing: .5px;
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    .obs-input {
+      width: 100%;
+      min-height: 52px;
+      border: none;
+      background: transparent;
+      resize: none;
+      outline: none;
+      font-size: .78rem;
+      color: var(--text-dark);
+      font-family: 'Source Sans 3', sans-serif;
+      line-height: 1.5;
+    }
+    .obs-input:focus { background: rgba(26,140,42,.03); }
+    .obs-input::placeholder { color: #aac4e0; font-style: italic; font-size: .7rem; }
+
+    .total-cell-bottom {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .total-label-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 6px 8px;
+      border-bottom: 1.5px solid var(--border);
+      gap: 4px;
+    }
+
+    .total-label {
+      font-size: .78rem;
+      font-weight: 700;
+      color: var(--blue);
+      letter-spacing: .5px;
+    }
+
+    .total-currency {
+      font-size: .78rem;
+      font-weight: 700;
+      color: var(--green-dark);
+    }
+
+    .total-value-input {
+      flex: 1;
+      padding: 6px 8px;
+      border: none;
+      background: transparent;
+      outline: none;
+      font-size: .85rem;
+      font-weight: 700;
+      color: var(--green-dark);
+      text-align: right;
+      font-family: 'Source Sans 3', sans-serif;
+    }
+    .total-value-input:focus { background: rgba(26,140,42,.05); }
+    .total-value-input::placeholder { color: #aac4e0; font-style: italic; font-size: .72rem; }
+
+    /* ─── Signatures ───────────────────────────────── */
+    footer {
+      padding: 18px 14px 14px;
+      display: flex;
+      justify-content: space-around;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+
+    .signature-block {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      flex: 1;
+      min-width: 160px;
+      max-width: 240px;
+    }
+
+    .signature-canvas-wrap {
+      width: 100%;
+      position: relative;
+    }
+
+    .sig-canvas {
+      width: 100%;
+      height: 60px;
+      border-bottom: 2px solid var(--line-color);
+      background: transparent;
+      cursor: crosshair;
+      display: block;
+    }
+
+    .sig-clear {
+      position: absolute;
+      top: 0; right: 0;
+      background: none;
+      border: none;
+      font-size: .6rem;
+      color: var(--blue-light);
+      cursor: pointer;
+      padding: 2px 4px;
+    }
+    .sig-clear:hover { color: var(--red-stamp); }
+
+    .signature-label {
+      font-size: .72rem;
+      font-weight: 700;
+      color: var(--green-dark);
+      text-transform: uppercase;
+      letter-spacing: .8px;
+      text-align: center;
+    }
+
+    /* ─── Print button ─────────────────────────────── */
+    .print-bar {
+      text-align: center;
+      padding: 10px;
+      background: rgba(25,118,210,.06);
+      border-top: 1.5px solid rgba(25,118,210,.2);
+    }
+
+    .print-btn {
+      background: linear-gradient(135deg, var(--green), var(--blue-mid));
+      color: white;
+      border: none;
+      padding: 8px 28px;
+      border-radius: 20px;
+      font-size: .8rem;
+      font-weight: 700;
+      letter-spacing: 1px;
+      cursor: pointer;
+      font-family: 'Source Sans 3', sans-serif;
+      transition: opacity .2s, transform .15s;
+    }
+    .print-btn:hover { opacity: .88; transform: translateY(-1px); }
+
+    /* ─── Print styles ─────────────────────────────── */
+    @media print {
+      body { background: white; padding: 0; }
+      .receipt { box-shadow: none; max-width: 100%; }
+      .print-bar, .add-row-btn, .sig-clear { display: none !important; }
+      .sig-canvas { border-bottom: 2px solid var(--line-color); }
+    }
+
+    /* ─── Responsive ───────────────────────────────── */
+    @media (max-width: 600px) {
+      .header-top { grid-template-columns: 1fr; }
+      .receipt-num-block { align-items: flex-start; }
+      .field-row { gap: 6px; }
+      .field-line.xshort { max-width: 100%; }
+      .obs-total-row { grid-template-columns: 1fr; }
+      .total-cell-bottom { border-top: 1.5px solid var(--border); }
+    }
+  </style>
+</head>
+<body>
+
+<article class="receipt">
+
+  <!-- ═══ HEADER ════════════════════════════════════ -->
+  <header>
+    <div class="header-top">
+
+      <!-- Logo -->
+      <div class="logo-block">
+        <div class="logo-title">
+          <span class="logo-green">GREEN</span>
+          <span class="logo-amp">&nbsp;&amp;&nbsp;</span>
+          <span class="logo-blue">BLUE</span>
+        </div>
+        <div class="logo-sub">a q u a m a r i n e</div>
+        <div class="logo-tagline">Efecto y prevención en la funcionalidad física</div>
+      </div>
+
+      <!-- Categories + phone -->
+      <div class="categories-block">
+        <div class="categories">
+          <label class="category-item">
+            <input type="checkbox" id="cat-rehab"/> REHABILITACIÓN
+          </label>
+          <label class="category-item">
+            <input type="checkbox" id="cat-ent"/> ENTRETENIMIENTO
+          </label>
+          <label class="category-item">
+            <input type="checkbox" id="cat-mas"/> MASAJES
+          </label>
+          <label class="category-item">
+            <input type="checkbox" id="cat-nat"/> NATACIÓN
+          </label>
+        </div>
+        <div class="phone-row">
+          <span class="phone-icon">📱</span>
+          <span>318 868 8008 / 310 740 6038</span>
+        </div>
+      </div>
+
+      <!-- Receipt number -->
+      <div class="receipt-num-block">
+        <span class="receipt-label">Recibo</span>
+        <div class="receipt-badge">
+          <span class="receipt-no-label">N°</span>
+          <span class="receipt-no-value">0484</span>
+        </div>
+      </div>
+
+    </div><!-- /header-top -->
+
+    <!-- Dates -->
+    <div class="dates-row">
+      <div class="date-group">
+        <span class="field-label">Fecha<br>Inicio</span>
+        <div class="date-boxes">
+          <input class="date-box" type="text" maxlength="2" placeholder="DD" title="Día"/>
+          <input class="date-box" type="text" maxlength="2" placeholder="MM" title="Mes"/>
+          <input class="date-box" type="text" maxlength="4" placeholder="AAAA" title="Año" style="width:38px"/>
+        </div>
+      </div>
+      <div class="date-group">
+        <span class="field-label">Fecha<br>Finalización</span>
+        <div class="date-boxes">
+          <input class="date-box" type="text" maxlength="2" placeholder="DD" title="Día"/>
+          <input class="date-box" type="text" maxlength="2" placeholder="MM" title="Mes"/>
+          <input class="date-box" type="text" maxlength="4" placeholder="AAAA" title="Año" style="width:38px"/>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ═══ BODY ══════════════════════════════════════ -->
+  <section class="receipt-body">
+
+    <!-- Client Data -->
+    <div class="client-section">
+
+      <div class="field-row">
+        <div class="field-group" style="flex:2">
+          <span class="field-label">Señor(es):</span>
+          <input class="field-line" type="text" placeholder="Nombre completo"/>
+        </div>
+        <div class="field-group" style="flex:2">
+          <span class="field-label">Dirección:</span>
+          <input class="field-line" type="text" placeholder="Dirección"/>
+        </div>
+      </div>
+
+      <div class="field-row">
+        <div class="field-group" style="flex:2">
+          <span class="field-label">Teléfono:</span>
+          <input class="field-line" type="tel" placeholder="Número de teléfono"/>
+        </div>
+        <div class="field-group">
+          <span class="field-label">Ciudad:</span>
+          <input class="field-line short" type="text" placeholder="Ciudad"/>
+        </div>
+        <div class="field-group">
+          <span class="field-label">Edad:</span>
+          <input class="field-line xshort" type="text" placeholder="—"/>
+        </div>
+        <div class="field-group">
+          <span class="field-label">Peso:</span>
+          <input class="field-line xshort" type="text" placeholder="kg"/>
+        </div>
+        <div class="field-group">
+          <span class="field-label">Talla:</span>
+          <input class="field-line xshort" type="text" placeholder="cm"/>
+        </div>
+        <div class="field-group">
+          <span class="field-label">PPL:</span>
+          <input class="field-line xshort" type="text" placeholder="—"/>
+        </div>
+      </div>
+
+    </div><!-- /client-section -->
+
+    <!-- Service Table -->
+    <div class="service-section">
+      <table class="service-table">
+        <thead>
+          <tr>
+            <th class="th-desc">DESCRIPCIÓN</th>
+            <th class="th-total">VR. TOTAL</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="desc-cell">
+              <div class="service-rows" id="service-rows">
+                <!-- rows injected by JS -->
+              </div>
+              <button class="add-row-btn" id="add-row-btn">+ Agregar línea</button>
+            </td>
+            <td class="total-cell">
+              <div id="total-cells">
+                <!-- total cells injected by JS -->
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- Observations + Total -->
+      <div class="obs-total-row">
+        <div class="obs-cell">
+          <span class="obs-label">Observaciones</span>
+          <textarea class="obs-input" placeholder="Escriba aquí las observaciones..." rows="3"></textarea>
+        </div>
+        <div class="total-cell-bottom">
+          <div class="total-label-row">
+            <span class="total-label">TOTAL</span>
+            <span class="total-currency">$</span>
+          </div>
+          <input class="total-value-input" type="text" id="grand-total" placeholder="0.00" readonly/>
+        </div>
+      </div>
+    </div>
+
+  </section><!-- /receipt-body -->
+
+  <!-- ═══ FOOTER / SIGNATURES ═══════════════════════ -->
+  <footer>
+    <div class="signature-block">
+      <div class="signature-canvas-wrap">
+        <canvas class="sig-canvas" id="sig-instructor" title="Firme aquí"></canvas>
+        <button class="sig-clear" data-target="sig-instructor">✕ Borrar</button>
+      </div>
+      <span class="signature-label">Firma del Instructor</span>
+    </div>
+
+    <div class="signature-block">
+      <div class="signature-canvas-wrap">
+        <canvas class="sig-canvas" id="sig-usuario" title="Firme aquí"></canvas>
+        <button class="sig-clear" data-target="sig-usuario">✕ Borrar</button>
+      </div>
+      <span class="signature-label">Firma del Usuario</span>
+    </div>
+  </footer>
+
+  <!-- Print bar -->
+  <div class="print-bar">
+    <button class="print-btn" onclick="window.print()">🖨️ &nbsp;Imprimir / Guardar PDF</button>
+  </div>
+
+</article>
+
+<!-- ═══════════════════════════════════════════════════
+     JAVASCRIPT – editable rows + signature pads
+═══════════════════════════════════════════════════ -->
+<script>
+  /* ── Service Rows ─────────────────────────────── */
+  const serviceRows  = document.getElementById('service-rows');
+  const totalCells   = document.getElementById('total-cells');
+  const addRowBtn    = document.getElementById('add-row-btn');
+  const grandTotalEl = document.getElementById('grand-total');
+
+  const ROW_HEIGHT = 28; // px per row visual
+
+  function parseNum(str) {
+    const n = parseFloat(str.replace(/[^0-9.]/g, ''));
+    return isNaN(n) ? 0 : n;
+  }
+
+  function fmt(n) {
+    if (n === 0) return '';
+    return n.toLocaleString('es-CO', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+  }
+
+  function recalcTotal() {
+    let sum = 0;
+    document.querySelectorAll('.sr-total').forEach(el => {
+      sum += parseNum(el.innerText || el.textContent);
+    });
+    grandTotalEl.value = sum > 0 ? fmt(sum) : '';
+  }
+
+  function addRow(desc = '', total = '') {
+    // desc cell
+    const rowD = document.createElement('div');
+    rowD.className = 'service-row';
+    rowD.style.minHeight = ROW_HEIGHT + 'px';
+
+    const spanD = document.createElement('div');
+    spanD.className = 'sr-desc';
+    spanD.contentEditable = 'true';
+    spanD.dataset.placeholder = 'Descripción del servicio…';
+    spanD.innerText = desc;
+    rowD.appendChild(spanD);
+    serviceRows.appendChild(rowD);
+
+    // total cell (matching row)
+    const rowT = document.createElement('div');
+    rowT.className = 'service-row';
+    rowT.style.minHeight = ROW_HEIGHT + 'px';
+
+    const spanT = document.createElement('div');
+    spanT.className = 'sr-total';
+    spanT.contentEditable = 'true';
+    spanT.dataset.placeholder = '0';
+    spanT.style.width = '100%';
+    spanT.innerText = total;
+    rowT.appendChild(spanT);
+    totalCells.appendChild(rowT);
+
+    spanT.addEventListener('input', recalcTotal);
+
+    // sync heights on every key
+    const syncH = () => {
+      const h = Math.max(rowD.offsetHeight, ROW_HEIGHT);
+      rowD.style.minHeight = h + 'px';
+      rowT.style.minHeight = h + 'px';
+    };
+    spanD.addEventListener('input', syncH);
+    spanT.addEventListener('input', syncH);
+  }
+
+  // Seed 6 rows
+  for (let i = 0; i < 6; i++) addRow();
+
+  addRowBtn.addEventListener('click', () => {
+    addRow();
+    serviceRows.lastElementChild?.querySelector('.sr-desc')?.focus();
+  });
+
+  /* ── Signature Pads ───────────────────────────── */
+  function initSigPad(canvasId) {
+    const canvas = document.getElementById(canvasId);
+    const ctx    = canvas.getContext('2d');
+
+    function resize() {
+      const w = canvas.offsetWidth;
+      const h = canvas.offsetHeight;
+      const tmp = ctx.getImageData(0, 0, canvas.width, canvas.height);
+      canvas.width  = w * devicePixelRatio;
+      canvas.height = h * devicePixelRatio;
+      ctx.scale(devicePixelRatio, devicePixelRatio);
+      ctx.putImageData(tmp, 0, 0);
+      ctx.strokeStyle = '#1a3a5c';
+      ctx.lineWidth   = 1.8;
+      ctx.lineCap     = 'round';
+      ctx.lineJoin    = 'round';
+    }
+
+    resize();
+    new ResizeObserver(resize).observe(canvas);
+
+    let drawing = false;
+    let last    = null;
+
+    function getPos(e) {
+      const r = canvas.getBoundingClientRect();
+      const src = e.touches ? e.touches[0] : e;
+      return { x: src.clientX - r.left, y: src.clientY - r.top };
+    }
+
+    function start(e) {
+      e.preventDefault();
+      drawing = true;
+      last = getPos(e);
+      ctx.beginPath();
+      ctx.moveTo(last.x, last.y);
+    }
+
+    function move(e) {
+      e.preventDefault();
+      if (!drawing) return;
+      const pos = getPos(e);
+      ctx.lineTo(pos.x, pos.y);
+      ctx.stroke();
+      last = pos;
+    }
+
+    function stop() { drawing = false; last = null; }
+
+    canvas.addEventListener('mousedown',  start);
+    canvas.addEventListener('mousemove',  move);
+    canvas.addEventListener('mouseup',    stop);
+    canvas.addEventListener('mouseleave', stop);
+    canvas.addEventListener('touchstart', start, { passive: false });
+    canvas.addEventListener('touchmove',  move,  { passive: false });
+    canvas.addEventListener('touchend',   stop);
+  }
+
+  initSigPad('sig-instructor');
+  initSigPad('sig-usuario');
+
+  // Clear buttons
+  document.querySelectorAll('.sig-clear').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const canvas = document.getElementById(btn.dataset.target);
+      const ctx    = canvas.getContext('2d');
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+    });
+  });
+
+  /* ── Auto-advance date boxes ──────────────────── */
+  document.querySelectorAll('.date-box').forEach((box, i, arr) => {
+    box.addEventListener('input', () => {
+      if (box.value.length >= parseInt(box.maxLength)) {
+        arr[i + 1]?.focus();
+      }
+    });
+  });
+</script>
+
+</body>
+</html>
